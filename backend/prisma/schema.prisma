@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id            String    @id @default(uuid())
+  email         String    @unique @db.VarChar(255)
+  senhaHash     String    @map("senha_hash") @db.VarChar(255)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  funcionarios  Funcionario[]
+  gastos        Gasto[]
+  orcamentoItens OrcamentoItem[]
+  @@map("usuarios")
+}
+
+model Funcionario {
+  id              String       @id @default(uuid())
+  usuarioId       String       @map("usuario_id")
+  nome            String       @db.VarChar(100)
+  telefone        String       @db.VarChar(20)
+  profissao       String       @db.VarChar(50)
+  valorDiaria     Decimal      @map("valor_diaria") @db.Decimal(10,2)
+  diasTrabalhados Int          @default(0) @map("dias_trabalhados")
+  datasTrabalhadas String?      @map("datas_trabalhadas") @db.Text
+  tipoContrato    TipoContrato @map("tipo_contrato")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  usuario         Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  @@map("funcionarios")
+}
+
+model Gasto {
+  id        String         @id @default(uuid())
+  usuarioId String         @map("usuario_id")
+  categoria CategoriaGasto
+  valor     Decimal        @db.Decimal(10,2)
+  descricao String?        @db.Text
+  dataGasto DateTime       @map("data_gasto") @db.Date
+  createdAt DateTime       @default(now()) @map("created_at")
+  usuario   Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  @@map("gastos")
+}
+
+model OrcamentoItem {
+  id            String   @id @default(uuid())
+  usuarioId     String   @map("usuario_id")
+  descricao     String   @db.VarChar(255)
+  quantidade    Int      @default(1)
+  valorUnitario Decimal  @map("valor_unitario") @db.Decimal(10,2)
+  dataCompra    DateTime @map("data_compra") @db.Date
+  createdAt     DateTime @default(now()) @map("created_at")
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  @@map("orcamento_itens")
+}
+
+enum TipoContrato {
+  CLT
+  PJ
+  TEMPORARIO
+}
+
+enum CategoriaGasto {
+  ALIMENTACAO
+  TRANSPORTE
+  MATERIAL
+}

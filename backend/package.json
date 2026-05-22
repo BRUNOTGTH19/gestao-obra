@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.1.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/jwt": "^9.0.0",
+    "@fastify/rate-limit": "^10.2.0",
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^6.19.3",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.4.0",
+    "fastify": "^5.2.0",
+    "openai": "^4.77.0",
+    "prisma": "^6.19.3",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
