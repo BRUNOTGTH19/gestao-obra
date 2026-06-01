@@ -17,20 +17,39 @@ const app = Fastify({ logger: true })
 
 // Segurança – Helmet
 app.register(helmet, {
-  contentSecurityPolicy: false, // CSP gerenciado pelo frontend
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
 })
 
-// CORS – restrito à origem de produção (via variável de ambiente) ou aberto em dev
+// ✅ FIX: CORS fecha sem variável de ambiente — não aceita qualquer origem em produção
 app.register(cors, {
-  origin: process.env.CORS_ORIGIN || true
+  origin: (origin, cb) => {
+    const allowedOrigin = process.env.CORS_ORIGIN
+
+    // Em desenvolvimento (sem variável definida), aceita localhost
+    if (!allowedOrigin) {
+      const isLocalhost = !origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')
+      return cb(null, isLocalhost)
+    }
+
+    // Em produção, aceita somente a origem configurada
+    cb(null, origin === allowedOrigin)
+  },
+  credentials: true
 })
 
 // Autenticação JWT
 app.register(jwt, { secret: process.env.JWT_SECRET! })
 
-// Rate limiting global
-app.register(rateLimit, { max: 100, timeWindow: '1 minute' })
+// Rate limiting global — 100 req/min por IP
+app.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+  errorResponseBuilder: () => ({
+    statusCode: 429,
+    message: 'Limite de requisições atingido. Tente novamente em 1 minuto.'
+  })
+})
 
 // Disponibiliza o Prisma em todas as rotas
 app.decorate('prisma', prisma)
@@ -49,8 +68,8 @@ app.addHook('onRequest', async (request, reply) => {
   if (request.url.startsWith('/api/v1/auth')) return
   try {
     await request.jwtVerify()
-  } catch (err) {
-    reply.code(401).send({ message: 'Unauthorized' })
+  } catch {
+    reply.code(401).send({ message: 'Token inválido ou expirado.' })
   }
 })
 

@@ -1,11 +1,18 @@
-# Dependências
+# Dependencias
 node_modules/
 
-# Variáveis de ambiente
+# Variaveis de ambiente
 .env
 .env.local
 .env.production
 
-# Arquivos sensíveis / de teste
-backend/test-connection.js
-frontend/.env.local.bak
+# Build
+dist/
+build/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
