@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../services/api'
 import { gerarPDFGastos } from '../services/pdf'
 import { formatDate, getTodayLocal } from '../utils/date'
-import { Pencil, Trash2, Plus, Search, FileText, X } from 'lucide-react'
+import { Pencil, Trash2, Plus, FileText, X } from 'lucide-react'
 
 interface Gasto {
   id: string
@@ -117,7 +117,6 @@ export default function Gastos() {
   const inputClass = "w-full px-3 py-2 rounded-lg bg-gray-900/50 border border-gray-700 text-white placeholder-gray-400 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
   const selectClass = "w-full px-3 py-2 rounded-lg bg-gray-900/50 border border-gray-700 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
   const btnPrimary = "bg-amber-500 hover:bg-amber-600 text-black font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2"
-  const btnDanger = "bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2"
   const btnSecondary = "bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2"
 
   return (
