@@ -1,32 +1,53 @@
-# Gestao Obra
+# 🏗️ Gestão Obra
 
-Sistema de gestao de obras com controle de funcionarios, gastos e orcamentos.
+Sistema de gestão de obras para construção civil. Controle de funcionários, gastos, orçamentos manuais e geração de orçamentos com inteligência artificial (Google Gemini).
 
-## Tecnologias
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Status: Em Produção](https://img.shields.io/badge/Status-Em%20Produção-brightgreen)
 
-- **Backend:** Fastify, TypeScript, Prisma, MySQL
-- **Frontend:** React, Vite, TypeScript
-- **Deploy:** Render (API) + Vercel (Frontend)
+🌐 **Acesse o sistema em produção:** [https://gestao-obra-theta.vercel.app](https://gestao-obra-theta.vercel.app)
 
-## Variaveis de Ambiente
+## ✨ Funcionalidades
 
-### Backend
-Copie \ackend/.env.example\ para \ackend/.env\ e preencha com seus valores.
+- ✅ Cadastro e gerenciamento de funcionários (diárias, datas trabalhadas)
+- ✅ Controle de gastos por categoria (alimentação, transporte, material)
+- ✅ Orçamentos manuais com cálculo automático de totais
+- ✅ Geração de orçamentos por IA (Google Gemini)
+- ✅ Filtros por data, categoria e nome
+- ✅ Exportação de relatórios em PDF
+- ✅ Autenticação JWT com isolamento de dados por usuário
+- ✅ PWA (pode ser instalado no celular/desktop)
+- ✅ Deploy automático via GitHub (Render + Vercel)
 
-### Frontend
-Copie \rontend/.env.example\ para \rontend/.env\ e preencha com seus valores.
+## 🚀 Tecnologias
 
-## Rodando localmente
+| Camada       | Tecnologias                                      |
+|--------------|--------------------------------------------------|
+| **Backend**  | Node.js, Fastify, TypeScript, Prisma ORM, MySQL  |
+| **Frontend** | React 19, Vite, TypeScript, Tailwind CSS, PWA    |
+| **IA**       | Google Gemini (gratuito)                         |
+| **Hospedagem**| Render (API) + Vercel (Frontend) + Railway (Banco)|
 
-### Backend
-\\\ash
-cd backend
-npm install
-npm run dev
-\\\`n
-### Frontend
-\\\ash
-cd frontend
-npm install
-npm run dev
-\\\`n
+## 📦 Pré-requisitos
+
+- Node.js 18+
+- MySQL 8+ (local) ou Docker
+- Conta no Google AI Studio (para funcionalidade de IA)
+
+## ⚙️ Variáveis de Ambiente
+
+### Backend (`backend/.env`)
+Crie um arquivo `.env` na pasta `backend` com base no exemplo abaixo:
+
+```env
+# Banco de dados MySQL
+DATABASE_URL=mysql://usuario:senha@localhost:3306/gestao_obra
+
+# Chave secreta para JWT (substitua por uma string forte)
+JWT_SECRET=seu_segredo_super_seguro
+
+# Chave da API Google Gemini para IA (opcional - obtenha em https://aistudio.google.com/apikey)
+GEMINI_API_KEY=sua_chave_gemini
+
+# Origem permitida para CORS (em produção, use a URL do frontend)
+CORS_ORIGIN=http://localhost:5173
