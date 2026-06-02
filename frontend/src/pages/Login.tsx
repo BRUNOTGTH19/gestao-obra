@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { LogIn } from 'lucide-react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -19,25 +20,39 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded-lg w-96">
-        <h1 className="text-2xl font-bold text-amber-500 mb-6">Gestão Obra</h1>
-        <input
-          type="email" placeholder="Email" value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 rounded bg-gray-700 text-white"
-          required
-        />
-        <input
-          type="password" placeholder="Senha" value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          className="w-full p-2 mb-6 rounded bg-gray-700 text-white"
-          required
-        />
-        <button type="submit" className="w-full bg-amber-500 text-black font-bold py-2 rounded">
-          Entrar
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4">
+      <div className="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 p-8 rounded-2xl w-full max-w-md">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="bg-amber-500/20 p-2 rounded-lg">
+            <LogIn className="w-6 h-6 text-amber-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-amber-500">Gestão Obra</h1>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg bg-gray-900/50 border border-gray-700 text-white placeholder-gray-400 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg bg-gray-900/50 border border-gray-700 text-white placeholder-gray-400 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2"
+          >
+            <LogIn className="w-4 h-4" /> Entrar
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

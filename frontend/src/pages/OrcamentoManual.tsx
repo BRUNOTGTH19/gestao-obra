@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import api from '../services/api'
 import { gerarPDFOrcamentoManual } from '../services/pdf'
+import { formatDate, getTodayLocal } from '../utils/date'
+import { Pencil, Trash2, Plus, FileText, X } from 'lucide-react'
 
 interface OrcamentoItem {
   id: string
@@ -16,10 +18,9 @@ export default function OrcamentoManual() {
     descricao: '',
     quantidade: '1',
     valorUnitario: '',
-    dataCompra: new Date().toISOString().split('T')[0]
+    dataCompra: getTodayLocal()
   })
 
-  // Estado para edição
   const [editando, setEditando] = useState<OrcamentoItem | null>(null)
   const [editForm, setEditForm] = useState({
     descricao: '',
@@ -28,7 +29,6 @@ export default function OrcamentoManual() {
     dataCompra: ''
   })
 
-  // Filtros
   const [filtroDataInicio, setFiltroDataInicio] = useState('')
   const [filtroDataFim, setFiltroDataFim] = useState('')
 
@@ -56,7 +56,7 @@ export default function OrcamentoManual() {
       descricao: '',
       quantidade: '1',
       valorUnitario: '',
-      dataCompra: new Date().toISOString().split('T')[0]
+      dataCompra: getTodayLocal()
     })
     carregar()
   }
@@ -67,14 +67,13 @@ export default function OrcamentoManual() {
     carregar()
   }
 
-  // Abre o modal de edição
   const iniciarEdicao = (item: OrcamentoItem) => {
     setEditando(item)
     setEditForm({
       descricao: item.descricao,
       quantidade: item.quantidade.toString(),
       valorUnitario: item.valorUnitario.toString(),
-      dataCompra: item.dataCompra.split('T')[0]
+      dataCompra: item.dataCompra
     })
   }
 
@@ -96,98 +95,117 @@ export default function OrcamentoManual() {
 
   const totalGeral = itens.reduce((acc, item) => acc + (item.quantidade * item.valorUnitario), 0)
 
+  const inputClass = "w-full px-3 py-2 rounded-lg bg-gray-900/50 border border-gray-700 text-white placeholder-gray-400 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
+  const btnPrimary = "bg-amber-500 hover:bg-amber-600 text-black font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2"
+  const btnSecondary = "bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2"
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold text-amber-500 mb-8">Orçamento Manual</h1>
-
-      {/* Filtros por data */}
-      <div className="bg-gray-800 p-4 rounded-lg mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Data Início</label>
-          <input type="date" className="w-full p-2 rounded bg-gray-700" value={filtroDataInicio} onChange={e => setFiltroDataInicio(e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Data Fim</label>
-          <input type="date" className="w-full p-2 rounded bg-gray-700" value={filtroDataFim} onChange={e => setFiltroDataFim(e.target.value)} />
-        </div>
-        <button onClick={() => { setFiltroDataInicio(''); setFiltroDataFim('') }} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-[42px]">
-          Limpar Filtros
-        </button>
-      </div>
-
-      {/* Formulário de cadastro */}
-      <form onSubmit={adicionar} className="bg-gray-800 p-6 rounded-lg mb-8 grid grid-cols-2 gap-4">
-        <input required className="p-2 rounded bg-gray-700" placeholder="Descrição (material/ferramenta)" value={form.descricao} onChange={e => setForm({...form, descricao: e.target.value})} />
-        <input required type="number" min="1" className="p-2 rounded bg-gray-700" placeholder="Quantidade" value={form.quantidade} onChange={e => setForm({...form, quantidade: e.target.value})} />
-        <input required type="number" min="0" step="0.01" className="p-2 rounded bg-gray-700" placeholder="Valor Unitário" value={form.valorUnitario} onChange={e => setForm({...form, valorUnitario: e.target.value})} />
-        <input required type="date" className="p-2 rounded bg-gray-700" value={form.dataCompra} onChange={e => setForm({...form, dataCompra: e.target.value})} />
-        <button type="submit" className="col-span-2 bg-amber-500 text-black font-bold py-2 rounded">Adicionar Item</button>
-      </form>
-
-      {/* Total geral + Exportar PDF */}
-      {itens.length > 0 && (
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-xl font-bold text-green-400">
-            Total Geral do Orçamento: R$ {totalGeral.toFixed(2)}
-          </div>
-          <button
-            onClick={() => gerarPDFOrcamentoManual(itens)}
-            className="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-          >
+    <div className="min-h-screen bg-gray-950 text-white p-4 md:p-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <h1 className="text-3xl font-bold text-amber-500 flex items-center gap-3">
+          <FileText className="w-8 h-8" />
+          Orçamento Manual
+        </h1>
+        {itens.length > 0 && (
+          <button onClick={() => gerarPDFOrcamentoManual(itens)} className="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg transition-all">
             Exportar PDF
           </button>
+        )}
+      </div>
+
+      <div className="bg-gray-900/60 backdrop-blur-sm p-4 rounded-xl mb-8 border border-gray-800/50">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Data Início</label>
+            <input type="date" className={inputClass} value={filtroDataInicio} onChange={e => setFiltroDataInicio(e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Data Fim</label>
+            <input type="date" className={inputClass} value={filtroDataFim} onChange={e => setFiltroDataFim(e.target.value)} />
+          </div>
+          <button onClick={() => { setFiltroDataInicio(''); setFiltroDataFim('') }} className={btnSecondary}>
+            <X className="w-4 h-4" /> Limpar
+          </button>
+        </div>
+      </div>
+
+      <form onSubmit={adicionar} className="bg-gray-900/60 backdrop-blur-sm p-6 rounded-xl mb-8 border border-gray-800/50">
+        <h2 className="text-xl font-semibold text-amber-500 mb-4">Novo Item</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input required className={inputClass} placeholder="Descrição (material/ferramenta)" value={form.descricao} onChange={e => setForm({...form, descricao: e.target.value})} />
+          <input required type="number" min="1" className={inputClass} placeholder="Quantidade" value={form.quantidade} onChange={e => setForm({...form, quantidade: e.target.value})} />
+          <input required type="number" min="0" step="0.01" className={inputClass} placeholder="Valor Unitário" value={form.valorUnitario} onChange={e => setForm({...form, valorUnitario: e.target.value})} />
+          <input required type="date" className={inputClass} value={form.dataCompra} onChange={e => setForm({...form, dataCompra: e.target.value})} />
+          <button type="submit" className={btnPrimary}>
+            <Plus className="w-4 h-4" /> Adicionar Item
+          </button>
+        </div>
+      </form>
+
+      {itens.length > 0 && (
+        <div className="flex justify-between items-center mb-6 bg-gray-900/60 backdrop-blur-sm p-4 rounded-xl border border-gray-800/50">
+          <span className="text-lg font-medium">Total Geral do Orçamento:</span>
+          <span className="text-2xl font-bold text-green-400">R$ {totalGeral.toFixed(2)}</span>
         </div>
       )}
 
-      {/* Lista de itens */}
-      <div className="grid gap-4">
+      <div className="space-y-4">
         {itens.map(item => {
           const subtotal = item.quantidade * item.valorUnitario
           return (
-            <div key={item.id} className="bg-gray-800 p-4 rounded flex justify-between items-center">
+            <div key={item.id} className="bg-gray-900/60 backdrop-blur-sm p-4 rounded-xl border border-gray-800/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-amber-500/30 transition-all">
               <div>
-                <strong className="text-amber-500">{item.descricao}</strong><br />
+                <strong className="text-amber-500 text-lg">{item.descricao}</strong><br />
                 Quantidade: {item.quantidade} | Valor Unit.: R$ {item.valorUnitario.toFixed(2)} | Subtotal: R$ {subtotal.toFixed(2)}<br />
-                <span className="text-gray-400 text-sm">Data: {new Date(item.dataCompra).toLocaleDateString('pt-BR')}</span>
+                <span className="text-gray-400 text-sm">Data: {formatDate(item.dataCompra)}</span>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => iniciarEdicao(item)} className="bg-blue-600 px-4 py-1 rounded hover:bg-blue-700">Editar</button>
-                <button onClick={() => excluir(item.id)} className="bg-red-600 px-4 py-1 rounded hover:bg-red-700">Excluir</button>
+                <button onClick={() => iniciarEdicao(item)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg flex items-center gap-1 transition">
+                  <Pencil className="w-4 h-4" /> Editar
+                </button>
+                <button onClick={() => excluir(item.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg flex items-center gap-1 transition">
+                  <Trash2 className="w-4 h-4" /> Excluir
+                </button>
               </div>
             </div>
           )
         })}
         {itens.length === 0 && (
-          <p className="text-gray-400 text-center">Nenhum item cadastrado.</p>
+          <p className="text-gray-400 text-center py-8">Nenhum item cadastrado.</p>
         )}
       </div>
 
-      {/* Modal de edição */}
       {editando && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-8 rounded-lg w-full max-w-lg">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl w-full max-w-md">
             <h2 className="text-2xl font-bold text-amber-500 mb-6">Editar Item</h2>
-            <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-1">Descrição</label>
-              <input className="w-full p-2 rounded bg-gray-700" value={editForm.descricao} onChange={e => setEditForm({...editForm, descricao: e.target.value})} />
-            </div>
-            <div className="mb-4 flex gap-4">
-              <div className="flex-1">
-                <label className="block text-sm text-gray-400 mb-1">Quantidade</label>
-                <input type="number" min="1" className="w-full p-2 rounded bg-gray-700" value={editForm.quantidade} onChange={e => setEditForm({...editForm, quantidade: e.target.value})} />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Descrição</label>
+                <input className={inputClass} value={editForm.descricao} onChange={e => setEditForm({...editForm, descricao: e.target.value})} />
               </div>
-              <div className="flex-1">
-                <label className="block text-sm text-gray-400 mb-1">Valor Unitário</label>
-                <input type="number" min="0" step="0.01" className="w-full p-2 rounded bg-gray-700" value={editForm.valorUnitario} onChange={e => setEditForm({...editForm, valorUnitario: e.target.value})} />
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm text-gray-400 mb-1">Quantidade</label>
+                  <input type="number" min="1" className={inputClass} value={editForm.quantidade} onChange={e => setEditForm({...editForm, quantidade: e.target.value})} />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm text-gray-400 mb-1">Valor Unitário</label>
+                  <input type="number" min="0" step="0.01" className={inputClass} value={editForm.valorUnitario} onChange={e => setEditForm({...editForm, valorUnitario: e.target.value})} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Data da Compra</label>
+                <input type="date" className={inputClass} value={editForm.dataCompra} onChange={e => setEditForm({...editForm, dataCompra: e.target.value})} />
               </div>
             </div>
-            <div className="mb-6">
-              <label className="block text-sm text-gray-400 mb-1">Data da Compra</label>
-              <input type="date" className="w-full p-2 rounded bg-gray-700" value={editForm.dataCompra} onChange={e => setEditForm({...editForm, dataCompra: e.target.value})} />
-            </div>
-            <div className="flex justify-end gap-4">
-              <button onClick={() => setEditando(null)} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded">Cancelar</button>
-              <button onClick={salvarEdicao} className="bg-amber-500 text-black font-bold py-2 px-6 rounded">Salvar</button>
+            <div className="flex justify-end gap-4 mt-6">
+              <button onClick={() => setEditando(null)} className={btnSecondary}>
+                <X className="w-4 h-4" /> Cancelar
+              </button>
+              <button onClick={salvarEdicao} className={btnPrimary}>
+                <Pencil className="w-4 h-4" /> Salvar
+              </button>
             </div>
           </div>
         </div>

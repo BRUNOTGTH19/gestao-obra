@@ -1,7 +1,3 @@
-/**
- * Retorna a data de hoje no formato YYYY-MM-DD (horário local).
- * Exemplo: 2026-05-20
- */
 export function getTodayLocal(): string {
   const now = new Date()
   const year = now.getFullYear()
@@ -10,12 +6,9 @@ export function getTodayLocal(): string {
   return `${year}-${month}-${day}`
 }
 
-/**
- * Converte uma string de data YYYY-MM-DD para o formato DD/MM/YYYY (exibição).
- * Não usa o objeto Date, portanto não sofre interferência de fuso horário.
- */
 export function formatDate(dateString: string): string {
   if (!dateString) return ''
-  const [year, month, day] = dateString.split('-')
+  const cleanDate = dateString.includes('T') ? dateString.split('T')[0] : dateString
+  const [year, month, day] = cleanDate.split('-')
   return `${day}/${month}/${year}`
 }
