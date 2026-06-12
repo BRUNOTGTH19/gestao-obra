@@ -1,6 +1,7 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/((?!.*\\.(png|svg|ico|jpg|jpeg|webp|js|css|json|txt|woff|woff2|ttf)).+)", "destination": "/index.html" }
   ],
   "headers": [
     {
@@ -19,6 +20,12 @@
       "source": "/assets/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*).png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     }
   ]
